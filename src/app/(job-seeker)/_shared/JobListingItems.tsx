@@ -143,7 +143,13 @@ function JobListingListItem({
 						</CardDescription>
 						{jobListing.postedAt != null && (
 							<div className='text-sm font-medium text-primary @min-md:hidden'>
-								<Suspense fallback={jobListing.postedAt.toLocaleDateString()}>
+								<Suspense
+									fallback={jobListing.postedAt.toLocaleDateString('en-US', {
+										month: 'short',
+										day: 'numeric',
+										year: 'numeric',
+									})}
+								>
 									<DaysSincePosting postedAt={jobListing.postedAt} />
 								</Suspense>
 							</div>
@@ -151,7 +157,13 @@ function JobListingListItem({
 					</div>
 					{jobListing.postedAt != null && (
 						<div className='text-sm font-medium text-primary ml-auto @max-md:hidden'>
-							<Suspense fallback={jobListing.postedAt.toLocaleDateString()}>
+							<Suspense
+								fallback={jobListing.postedAt.toLocaleDateString('en-US', {
+									month: 'short',
+									day: 'numeric',
+									year: 'numeric',
+								})}
+							>
 								<DaysSincePosting postedAt={jobListing.postedAt} />
 							</Suspense>
 						</div>
@@ -177,7 +189,7 @@ async function DaysSincePosting({ postedAt }: { postedAt: Date }) {
 		return <Badge>New</Badge>
 	}
 
-	return new Intl.RelativeTimeFormat(undefined, {
+	return new Intl.RelativeTimeFormat('en-US', {
 		style: 'narrow',
 		numeric: 'always',
 	}).format(daysSincePosted, 'days')
@@ -236,7 +248,7 @@ async function getJobListings(
 				? and(
 						eq(JobListingTable.status, 'published'),
 						eq(JobListingTable.id, jobListingId)
-				  )
+					)
 				: undefined,
 			and(eq(JobListingTable.status, 'published'), ...whereConditions)
 		),

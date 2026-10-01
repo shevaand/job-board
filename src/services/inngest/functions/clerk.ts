@@ -31,13 +31,13 @@ function verifyWebhook({
 	raw: string
 	headers: Record<string, string>
 }) {
-	// if (
-	// 	process.env.INNGEST_DEV === '1' ||
-	// 	process.env.NODE_ENV === 'development'
-	// ) {
-	// 	console.log('⚠️ [Inngest] Lokal dev: skip verify Svix')
-	// 	return true
-	// }
+	if (
+		process.env.INNGEST_DEV === '1' ||
+		process.env.NODE_ENV === 'development'
+	) {
+		console.log('⚠️ [Inngest] Lokal dev: skip verify Svix')
+		return true
+	}
 	return new Webhook(env.CLERK_WEBHOOK_SECRET).verify(raw, headers)
 }
 

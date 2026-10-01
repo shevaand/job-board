@@ -57,6 +57,36 @@ The application combines job search, AI-powered features, resume processing, emp
 - Data tables
 - Form validation
 
+## Screenshots
+
+### Job Search
+
+![Job Main](screenshots/job-main.png)
+
+### Job Details
+
+![Job Details](screenshots/job-details.png)
+
+### Resume AI Processing
+
+![Resume AI Processing](screenshots/resume-ai-processing.png)
+
+### Notification Email
+
+![Email](screenshots/job-notification.png)
+
+### Employer Dashboard
+
+![Employer Dashboard](screenshots/create-job-ende.png)
+
+### Create Job
+
+![Create Job](screenshots/create-job.png.png)
+
+### Apply to Job
+
+![Apply to Job](screenshots/apply-to-job.png)
+
 ## Tech Stack
 
 ### Frontend
