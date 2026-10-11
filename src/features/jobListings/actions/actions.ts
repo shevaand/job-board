@@ -103,7 +103,6 @@ export async function updateJobListing(
 }
 
 export async function toggleJobListingStatus(id: string) {
-	console.log('test')
 	const error = {
 		error: true,
 		message: "You don't have permission to update this job listing's status",

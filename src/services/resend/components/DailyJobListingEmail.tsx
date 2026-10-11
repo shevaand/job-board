@@ -23,7 +23,8 @@ type JobListing = Pick<
 	| 'id'
 	| 'title'
 	| 'city'
-	| 'stateAbbreviation'
+	| 'region'
+	| 'countryCode'
 	| 'type'
 	| 'experienceLevel'
 	| 'wage'
@@ -97,7 +98,7 @@ function getBadges(jobListing: JobListing) {
 		formatExperienceLevel(jobListing.experienceLevel),
 	]
 
-	if (jobListing.city != null || jobListing.stateAbbreviation != null) {
+	if (jobListing.city != null || jobListing.countryCode != null) {
 		badges.unshift(formatJobListingLocation(jobListing))
 	}
 
@@ -112,7 +113,8 @@ DailyJobListingEmail.PreviewProps = {
 	jobListings: [
 		{
 			city: 'Omaha',
-			stateAbbreviation: 'NE',
+			region: 'Nebraska',
+			countryCode: 'US',
 			title: 'Frontend Developer',
 			wage: null,
 			wageInterval: null,
@@ -123,14 +125,28 @@ DailyJobListingEmail.PreviewProps = {
 			locationRequirement: 'in-office',
 		},
 		{
+			city: 'Vienna',
+			region: 'Vienna',
+			countryCode: 'AT',
+			title: 'React Developer',
+			wage: 55000,
+			wageInterval: 'yearly',
+			experienceLevel: 'junior',
+			type: 'full-time',
+			id: 'preview-job-2',
+			organizationName: 'Example GmbH',
+			locationRequirement: 'hybrid',
+		},
+		{
 			city: null,
-			stateAbbreviation: null,
+			region: null,
+			countryCode: null,
 			title: 'Software Engineer',
 			wage: 100000,
 			wageInterval: 'yearly',
 			experienceLevel: 'mid-level',
 			type: 'full-time',
-			id: 'preview-job-1',
+			id: 'preview-job-3',
 			organizationName: 'Google',
 			locationRequirement: 'remote',
 		},

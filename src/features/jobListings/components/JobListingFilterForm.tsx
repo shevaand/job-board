@@ -36,14 +36,14 @@ import {
 	formatJobType,
 	formatLocationRequirement,
 } from '../lib/formatters'
-import { StateSelectItems } from './StateSelectItems'
+import { CountrySelectItems } from './CountrySelectItems'
 
 const ANY_VALUE = 'any'
 
 const jobListingFilterSchema = z.object({
 	title: z.string().optional(),
 	city: z.string().optional(),
-	stateAbbreviation: z.string().or(z.literal(ANY_VALUE)).optional(),
+	countryCode: z.string().or(z.literal(ANY_VALUE)).optional(),
 	experienceLevel: z.enum(experienceLevels).or(z.literal(ANY_VALUE)).optional(),
 	type: z.enum(jobListingTypes).or(z.literal(ANY_VALUE)).optional(),
 	locationRequirement: z
@@ -66,7 +66,7 @@ export function JobListingFilterForm() {
 			locationRequirement:
 				(searchParams.get('locationRequirement') as LocationRequirement) ??
 				ANY_VALUE,
-			stateAbbreviation: searchParams.get('state') ?? ANY_VALUE,
+			countryCode: searchParams.get('country') ?? ANY_VALUE,
 			experienceLevel:
 				(searchParams.get('experience') as ExperienceLevel) ?? ANY_VALUE,
 			type: (searchParams.get('type') as jobListingType) ?? ANY_VALUE,
@@ -77,8 +77,8 @@ export function JobListingFilterForm() {
 		const newParams = new URLSearchParams()
 
 		if (data.city) newParams.set('city', data.city)
-		if (data.stateAbbreviation && data.stateAbbreviation !== ANY_VALUE) {
-			newParams.set('state', data.stateAbbreviation)
+		if (data.countryCode && data.countryCode !== ANY_VALUE) {
+			newParams.set('country', data.countryCode)
 		}
 		if (data.title) newParams.set('title', data.title)
 		if (data.experienceLevel && data.experienceLevel !== ANY_VALUE) {
@@ -150,11 +150,11 @@ export function JobListingFilterForm() {
 					)}
 				/>
 				<FormField
-					name='stateAbbreviation'
+					name='countryCode'
 					control={form.control}
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>State</FormLabel>
+							<FormLabel>Country</FormLabel>
 							<Select value={field.value} onValueChange={field.onChange}>
 								<FormControl>
 									<SelectTrigger className='w-full'>
@@ -163,7 +163,7 @@ export function JobListingFilterForm() {
 								</FormControl>
 								<SelectContent>
 									<SelectItem value={ANY_VALUE}>Any</SelectItem>
-									<StateSelectItems />
+									<CountrySelectItems />
 								</SelectContent>
 							</Select>
 							<FormMessage />

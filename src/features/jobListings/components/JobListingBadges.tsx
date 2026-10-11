@@ -21,8 +21,9 @@ export function JobListingBadges({
 	jobListing: {
 		wage,
 		wageInterval,
-		stateAbbreviation,
 		city,
+		region,
+		countryCode,
 		type,
 		experienceLevel,
 		locationRequirement,
@@ -34,8 +35,9 @@ export function JobListingBadges({
 		typeof JobListingTable.$inferSelect,
 		| 'wage'
 		| 'wageInterval'
-		| 'stateAbbreviation'
 		| 'city'
+		| 'region'
+		| 'countryCode'
 		| 'type'
 		| 'experienceLevel'
 		| 'locationRequirement'
@@ -67,10 +69,10 @@ export function JobListingBadges({
 					{formatWage(wage, wageInterval)}
 				</Badge>
 			)}
-			{(stateAbbreviation != null || city != null) && (
+			{(city != null || countryCode != null) && (
 				<Badge {...badgeProps}>
-					<MapPinIcon className='size-10' />
-					{formatJobListingLocation({ stateAbbreviation, city })}
+					<MapPinIcon />
+					{formatJobListingLocation({ city, region, countryCode })}
 				</Badge>
 			)}
 			<Badge {...badgeProps}>

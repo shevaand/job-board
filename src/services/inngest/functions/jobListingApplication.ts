@@ -4,10 +4,10 @@ import {
 	JobListingTable,
 	UserResumeTable,
 } from '@/drizzle/schema'
+import { formatCountry } from '@/features/jobListings/lib/formatters'
 import { applicantRankingAgent } from '@/services/ai/applicantRankingAgent'
 import { and, eq } from 'drizzle-orm'
 import { inngest, jobListingApplicationCreate } from '../client'
-// import { applicantRankingAgent } from "../../ai/applicantRankingAgent"
 
 export const rankApplication = inngest.createFunction(
 	{
@@ -45,10 +45,11 @@ export const rankApplication = inngest.createFunction(
 				columns: {
 					id: true,
 					city: true,
+					region: true,
+					countryCode: true,
 					description: true,
 					experienceLevel: true,
 					locationRequirement: true,
-					stateAbbreviation: true,
 					title: true,
 					wage: true,
 					wageInterval: true,
@@ -65,8 +66,18 @@ export const rankApplication = inngest.createFunction(
 
 		if (resumeSummary == null || jobListing == null) return
 
+		const { countryCode, ...jobListingDetails } = jobListing
+
 		await applicantRankingAgent.run(
-			JSON.stringify({ coverLetter, resumeSummary, jobListingId, userId })
+			JSON.stringify({
+				coverLetter,
+				resumeSummary,
+				jobListing: {
+					...jobListingDetails,
+					country: formatCountry(countryCode) ?? undefined,
+				},
+				userId,
+			})
 		)
 	}
 )

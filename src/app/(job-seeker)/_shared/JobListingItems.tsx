@@ -36,7 +36,11 @@ type Props = {
 const searchParamsSchema = z.object({
 	title: z.string().optional().catch(undefined),
 	city: z.string().optional().catch(undefined),
-	state: z.string().optional().catch(undefined),
+	country: z
+		.string()
+		.regex(/^[A-Za-z]{2}$/)
+		.optional()
+		.catch(undefined),
 	experience: z.enum(experienceLevels).optional().catch(undefined),
 	locationRequirement: z.enum(locationRequirements).optional().catch(undefined),
 	type: z.enum(jobListingTypes).optional().catch(undefined),
@@ -98,7 +102,8 @@ function JobListingListItem({
 	jobListing: Pick<
 		typeof JobListingTable.$inferSelect,
 		| 'title'
-		| 'stateAbbreviation'
+		| 'region'
+		| 'countryCode'
 		| 'city'
 		| 'wage'
 		| 'wageInterval'
@@ -220,9 +225,9 @@ async function getJobListings(
 		whereConditions.push(ilike(JobListingTable.city, `%${searchParams.city}%`))
 	}
 
-	if (searchParams.state) {
+	if (searchParams.country) {
 		whereConditions.push(
-			eq(JobListingTable.stateAbbreviation, searchParams.state)
+			eq(JobListingTable.countryCode, searchParams.country.toUpperCase())
 		)
 	}
 

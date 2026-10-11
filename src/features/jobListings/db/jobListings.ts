@@ -12,7 +12,10 @@ export async function insertJobListing(
 			...jobListing,
 			wage: jobListing.wage ? Number(jobListing.wage) || null : null,
 			city: jobListing.city || null,
-			stateAbbreviation: jobListing.stateAbbreviation || null,
+			region: jobListing.region || null,
+			countryCode: jobListing.countryCode
+				? jobListing.countryCode.toUpperCase()
+				: null,
 		})
 		.returning({
 			id: JobListingTable.id,

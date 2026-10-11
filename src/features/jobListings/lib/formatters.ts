@@ -94,20 +94,34 @@ export function formatWage(wage: number, wageInterval: WageInterval) {
 	}
 }
 
-export function formatJobListingLocation({
-	stateAbbreviation,
-	city,
-}: {
-	stateAbbreviation?: string | null
-	city?: string | null
-}) {
-	if (stateAbbreviation == null && city == null) return 'None'
+const countryNames = new Intl.DisplayNames(['en'], { type: 'region' })
 
-	const locationParts = []
-	if (city != null) locationParts.push(city)
-	if (stateAbbreviation != null) {
-		locationParts.push(stateAbbreviation.toUpperCase())
+export function formatCountry(countryCode?: string | null) {
+	if (countryCode == null) return null
+
+	try {
+		return countryNames.of(countryCode.toUpperCase()) ?? countryCode
+	} catch {
+		return countryCode
 	}
+}
 
-	return locationParts.join(', ')
+export function formatJobListingLocation({
+	city,
+	region,
+	countryCode,
+}: {
+	city?: string | null
+	region?: string | null
+	countryCode?: string | null
+}) {
+	const country = formatCountry(countryCode)
+
+	const regionPart = region != null && region !== city ? region : null
+
+	const locationParts = [city, regionPart, country].filter(
+		(part): part is string => part != null
+	)
+
+	return locationParts.length === 0 ? 'None' : locationParts.join(', ')
 }

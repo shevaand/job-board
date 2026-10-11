@@ -15,13 +15,17 @@ export const jobListingSchema = z
 		type: z.enum(jobListingTypes),
 		wage: z.number().int().positive().min(1).nullable(),
 		wageInterval: z.enum(wageIntervals).nullable(),
-		stateAbbreviation: z
-			.string()
-			.transform(val => (val.trim() === '' ? null : val))
-			.nullable(),
 		city: z
 			.string()
 			.transform(val => (val.trim() === '' ? null : val))
+			.nullable(),
+		region: z
+			.string()
+			.transform(val => (val.trim() === '' ? null : val))
+			.nullable(),
+		countryCode: z
+			.string()
+			.transform(val => (val.trim() === '' ? null : val.trim().toUpperCase()))
 			.nullable(),
 	})
 	.refine(
@@ -36,13 +40,23 @@ export const jobListingSchema = z
 	.refine(
 		listing => {
 			return (
-				listing.locationRequirement === 'remote' ||
-				listing.stateAbbreviation != null
+				listing.locationRequirement === 'remote' || listing.countryCode != null
 			)
 		},
 		{
-			message: 'Required for non-remote listings',
-			path: ['stateAbbreviation'],
+			message: 'Select a city from the suggestions',
+			path: ['city'],
+		}
+	)
+	.refine(
+		listing => {
+			return (
+				listing.countryCode == null || /^[A-Z]{2}$/.test(listing.countryCode)
+			)
+		},
+		{
+			message: 'Invalid country',
+			path: ['city'],
 		}
 	)
 

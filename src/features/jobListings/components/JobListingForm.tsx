@@ -35,13 +35,12 @@ import { createJobLsting, updateJobListing } from '../actions/actions'
 import { jobListingSchema } from '../actions/schemas'
 import {
 	formatExperienceLevel,
+	formatJobListingLocation,
 	formatJobType,
 	formatLocationRequirement,
 	formatWageInterval,
 } from '../lib/formatters'
-import { StateSelectItems } from './StateSelectItems'
-
-const NONE_SELECT_VALUE = 'none'
+import { CityAutocomplete } from './CityAutocomplete'
 
 export function JobListingForm({
 	jobListing,
@@ -52,7 +51,8 @@ export function JobListingForm({
 		| 'description'
 		| 'experienceLevel'
 		| 'id'
-		| 'stateAbbreviation'
+		| 'region'
+		| 'countryCode'
 		| 'type'
 		| 'wage'
 		| 'wageInterval'
@@ -65,8 +65,9 @@ export function JobListingForm({
 		defaultValues: jobListing ?? {
 			title: '',
 			description: '',
-			stateAbbreviation: null,
 			city: null,
+			region: null,
+			countryCode: null,
 			wage: null,
 			wageInterval: 'yearly',
 			experienceLevel: 'junior',
@@ -74,6 +75,15 @@ export function JobListingForm({
 			locationRequirement: 'in-office',
 		},
 	})
+
+	const initialLocationLabel =
+		jobListing?.city != null
+			? formatJobListingLocation({
+					city: jobListing.city,
+					region: jobListing.region,
+					countryCode: jobListing.countryCode,
+				})
+			: ''
 
 	async function onSubmit(data: z.infer<typeof jobListingSchema>) {
 		const action = jobListing
@@ -164,55 +174,36 @@ export function JobListingForm({
 					/>
 				</div>
 				<div className='grid grid-cols-1 @md:grid-cols-2 gap-x-4 gap-y-6 items-start'>
-					<div className='grid grid-cols-1 @xs:grid-cols-2 gap-x-2 gap-y-6 items-start'>
-						<FormField
-							name='city'
-							control={form.control}
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>City</FormLabel>
-									<FormControl>
-										<Input {...field} value={field.value ?? ''} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							name='stateAbbreviation'
-							control={form.control}
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>State</FormLabel>
-									<Select
-										value={field.value ?? ''}
-										onValueChange={val =>
-											field.onChange(val === NONE_SELECT_VALUE ? null : val)
-										}
-									>
-										<FormControl>
-											<SelectTrigger className='w-full'>
-												<SelectValue />
-											</SelectTrigger>
-										</FormControl>
-										<SelectContent>
-											{field.value != null && (
-												<SelectItem
-													value={NONE_SELECT_VALUE}
-													className='text-muted-foreground'
-												>
-													Clear
-												</SelectItem>
-											)}
-
-											<StateSelectItems />
-										</SelectContent>
-									</Select>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-					</div>
+					<FormField
+						name='city'
+						control={form.control}
+						render={() => (
+							<FormItem>
+								<FormLabel>City</FormLabel>
+								<FormControl>
+									<CityAutocomplete
+										initialValue={initialLocationLabel}
+										onPlaceSelect={place => {
+											form.setValue('region', place.region)
+											form.setValue('countryCode', place.countryCode)
+											form.setValue('city', place.city, {
+												shouldValidate: true,
+											})
+										}}
+										onPlaceClear={() => {
+											form.setValue('city', null)
+											form.setValue('region', null)
+											form.setValue('countryCode', null)
+										}}
+									/>
+								</FormControl>
+								<FormDescription>
+									Pick a city from the suggestions to set the country
+								</FormDescription>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 					<FormField
 						name='locationRequirement'
 						control={form.control}

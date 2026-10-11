@@ -15,12 +15,25 @@ const listingSchema = z.object({
 	description: z.string(),
 	wage: z.number().nullable(),
 	wageInterval: z.enum(wageIntervals).nullable(),
-	stateAbbreviation: z.string().nullable(),
 	city: z.string().nullable(),
+	region: z.string().nullable(),
+	countryCode: z.string().nullable(),
 	experienceLevel: z.enum(experienceLevels),
 	type: z.enum(jobListingTypes),
 	locationRequirement: z.enum(locationRequirements),
 })
+
+const countryNames = new Intl.DisplayNames(['en'], { type: 'region' })
+
+function getCountryName(countryCode: string | null) {
+	if (countryCode == null) return undefined
+
+	try {
+		return countryNames.of(countryCode.toUpperCase()) ?? countryCode
+	} catch {
+		return countryCode
+	}
+}
 
 export async function getMatchingJobListings(
 	prompt: string,
@@ -39,12 +52,13 @@ export async function getMatchingJobListings(
 		} Return the jobs as a comma separated list of jobIds. If you cannot find any jobs that match the user prompt, return the text "${NO_JOBS}". Here is the JSON array of available job listings: ${JSON.stringify(
 			jobListings.map(listing =>
 				listingSchema
-					.transform(listing => ({
+					.transform(({ countryCode, ...listing }) => ({
 						...listing,
 						wage: listing.wage ?? undefined,
 						wageInterval: listing.wageInterval ?? undefined,
 						city: listing.city ?? undefined,
-						stateAbbreviation: listing.stateAbbreviation ?? undefined,
+						region: listing.region ?? undefined,
+						country: getCountryName(countryCode),
 						locationRequirement: listing.locationRequirement ?? undefined,
 					}))
 					.parse(listing)
